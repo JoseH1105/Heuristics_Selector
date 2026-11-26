@@ -51,12 +51,24 @@ python -m salbp_selector.gen --config configs/generator.yaml --core-per-cell 50 
 Salida: `data/raw/instances/all/n{n}/{core,extended}.jsonl.gz` y `generation_log.json` (configuración,
 tasas de rechazo por celda y SHA-256 de cada archivo). `--format json` escribe un `.json` por instancia.
 
-App de interfaz (generar, cargar `.json`/`.alb`/`.IN2`, ver el grafo por etapas, tareas, tiempos,
-soluciones de las 12 reglas, cóctel y *rollout*, generar lotes y guardar):
+App de interfaz:
 
 ```powershell
 streamlit run apps/generator_app.py
 ```
+
+Ejecútala desde la raíz del proyecto para que cargue el tema de `.streamlit/config.toml`. El panel
+izquierdo guía en tres pasos (origen, celda y semilla). La vista principal muestra si la instancia
+cumple su celda, los indicadores del grafo y seis pestañas:
+
+| Pestaña | Qué muestra |
+|---|---|
+| Grafo | Grafo por etapas coloreado por estructura, tiempo o estación; puedes resaltar una tarea con sus predecesoras y sucesoras |
+| Tareas | Tabla filtrable con NS, NSI, PP, CI, CS y holgura, descargable en CSV |
+| Tiempos | Histograma de t_i/c y resumen |
+| Heurísticas | K de las 12 reglas frente a LB1, rollout y la asignación por estación de cualquier regla |
+| Lote | Varias instancias de la misma celda con su variación de OS y LB1 y la tasa de rechazo |
+| Exportar | Descarga en JSON o `.alb` y guardado en una carpeta del proyecto |
 
 Validación del generador y piloto del motor:
 
@@ -82,4 +94,4 @@ run_rule(inst, 1).K, run_cocktail(inst)["K_min"], run_rollout(inst).K
 - 269 instancias de Scholl → `data/external/scholl/` (`.alb`, o `.IN2` + `cycle_times.csv`) para la
   prueba de reproducción de la tabla del cóctel.
 - Conjunto de Otto et al. (2013) → `data/external/otto2013/` para los criterios 2 y 3 de la validación.
-- Valores de la Tabla 5 del artículo (número de etapas) → `configs/generator.yaml`, `stages.fixed`.
+  De esa comparación saldrán también las desviaciones de PB y PM, que el artículo no publica.

@@ -51,7 +51,9 @@ DEFAULT_CONFIG: dict = {
     "stages": {"mode": "auto",
                "anchor_os_fraction": {"mixed": 0.9, "chain": 0.9, "bottleneck": 0.3},
                "min_stages": 3,
-               "fixed": {20: None, 50: None, 100: None}},
+               "fixed": {20: 6, 50: 11, 100: 17},  # Tabla 5 del artículo
+               "table5_structures": ["mixed"],
+               "table5_margin": 0.05},
     "max_direct_successors": None,
     "max_chain_length": 5,
     "max_attempts": 500,
@@ -117,16 +119,30 @@ def os_tolerance(n: int, cfg: dict) -> float:
     return 0.005
 
 
-def n_stages_for(n: int, os_target: float, cfg: dict, structure: str = "mixed") -> int:
-    """Número de etapas. ``fixed`` (Tabla 5 del artículo) tiene prioridad; si es nulo se usa
-    el modo ``auto``: S = 1 + f·OS·(n − 1). En un bosque de anclaje con etapas de igual tamaño
-    el OS vale (S − 1)/(n − 1), así que el anclaje deja el OS en una fracción f del objetivo y
-    el paso 4 tiene margen para llegar a él. ``f`` puede darse por estructura."""
+def n_stages_for(n: int, os_target: float, cfg: dict, structure: str = "mixed",
+                 seeded_chains: bool = False) -> int:
+    """Número de etapas.
+
+    - ``fixed`` (Tabla 5 del artículo: 6, 11 y 17 etapas para n = 20, 50 y 100) se usa en el modo
+      por defecto del artículo: estructura en ``table5_structures``, sin cadenas sembradas y con un
+      OS objetivo que no sea extremo para ese K (§6.2).
+    - En los demás casos, modo ``auto``: S = 1 + f·OS·(n − 1). En un bosque de anclaje con etapas
+      de igual tamaño el OS vale (S − 1)/(n − 1), así que el anclaje deja el OS en una fracción f
+      del objetivo y el paso 4 tiene margen para llegar a él. ``f`` puede darse por estructura.
+    """
     st = cfg["stages"]
     fixed = st.get("fixed") or {}
     val = fixed.get(n, fixed.get(str(n)))
-    if val:
-        return int(val)
+    if val and not seeded_chains:
+        k = int(val)
+        # Tabla 5 solo se usa si el OS objetivo no es extremo para ese K (§6.2): con etapas de
+        # tamaño uniforme, el anclaje da OS ≈ (K−1)/(n−1) y el máximo es ≈ (n − n/K)/(n − 1).
+        margin = float(st.get("table5_margin", 0.05))
+        os_lo = (k - 1) / (n - 1)
+        os_hi = (n - n / k) / (n - 1)
+        if structure in st.get("table5_structures", ["mixed"]) and \
+                os_lo + margin <= os_target <= os_hi - margin:
+            return k
     f = st.get("anchor_os_fraction", 0.6)
     if isinstance(f, dict):
         f = f.get(structure, f.get("default", 0.6))
@@ -262,7 +278,8 @@ def generate(cell: CellSpec, seed: int, config: dict | None = None, index: int =
         s = int(seed) + attempt
         rng = np.random.default_rng(s)
         params = _resolve_structure(cell, rng, cfg)
-        n_stages = n_stages_for(cell.n, cell.os_target, cfg, cell.structure)
+        n_stages = n_stages_for(cell.n, cell.os_target, cfg, cell.structure,
+                                seeded_chains=bool(params.chain_share))
         spec = GraphSpec(
             n=cell.n,
             os_target=cell.os_target,

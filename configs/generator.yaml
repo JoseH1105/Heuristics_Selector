@@ -14,20 +14,26 @@ os_tolerance:
   - {max_n: 49,   tol: 0.05}    # 20 < n < 50
   - {max_n: null, tol: 0.005}   # n >= 50
 
-# Número de etapas del procedimiento por etapas (§5.2, Tabla 5).
-# `fixed`: valor de la Tabla 5 por tamaño (PENDIENTE: copiarlo del artículo; null = usar `auto`).
-# `auto`:  S = 1 + f * OS_objetivo * (n - 1). El anclaje solo deja un OS de (S-1)/(n-1), es decir,
-#          una fracción f del objetivo, y el paso 4 lo completa. Valores de f elegidos por medición
-#          (barrido de f con 15-30 instancias por celda) para que la tasa de rechazo sea < 50 %
-#          en n = 50 y n = 100 (criterio de aceptación de F2B §5).
+# Número de etapas del procedimiento por etapas (§5.2 y §6.2).
+# `fixed`: Tabla 5 del artículo (etapas con máxima flexibilidad de OS). El artículo la usa por defecto
+#          "cuando el OS no es extremadamente bajo o alto". Aquí se aplica a las estructuras de
+#          `table5_structures` sin cadenas sembradas, y solo si el OS objetivo queda a `table5_margin`
+#          o más de los límites (K-1)/(n-1) y (n - n/K)/(n-1) que da ese K con etapas uniformes.
+# `auto`:  resto de casos. S = 1 + f * OS_objetivo * (n - 1): el anclaje deja un OS de (S-1)/(n-1),
+#          una fracción f del objetivo, y el paso 4 lo completa. f elegido por medición (barrido con
+#          15-30 instancias por celda) para que la tasa de rechazo sea < 50 % en n = 50 y n = 100.
+#          Con la Tabla 5 en CH o BN el rechazo de la capa ampliada llegaba al 60-97 %.
 stages:
   mode: auto
   anchor_os_fraction: {mixed: 0.9, chain: 0.9, bottleneck: 0.3}
   min_stages: 3
-  fixed: {20: null, 50: null, 100: null}
+  fixed: {20: 6, 50: 11, 100: 17}    # Tabla 5 (§6.2)
+  table5_structures: [mixed]
+  table5_margin: 0.05
 
-max_direct_successors: null   # máximo de sucesoras directas por tarea (null = sin límite)
-max_chain_length: 5           # supuesto: cadenas largas impiden alcanzar OS 0,6 (medido en el barrido)
+max_direct_successors: null   # máximo de sucesoras directas (Figura 3: por defecto n, es decir, sin límite)
+max_chain_length: 5           # Tabla 4: longitud media de cadena en grafos reales 2,2-3,5; con cadenas
+                              # más largas no se alcanza OS 0,6 (medido en el barrido)
 max_attempts: 500             # intentos por instancia antes de declarar la celda inviable
 
 structures:

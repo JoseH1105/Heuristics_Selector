@@ -312,10 +312,13 @@ def write_report(path: Path, ctx: dict) -> None:
           f"{ctx['master_seed']} y se compararon los archivos `.jsonl.gz`:\n\n"
           f"- ejecución 1: `{rep['hash_run1']}`\n- ejecución 2: `{rep['hash_run2']}`\n- idénticos: **{rep['identical']}**\n",
           "\n## Supuestos y desviaciones documentadas\n",
-          "- Número de etapas: modo `auto` (S = 1 + f·OS·(n − 1)) mientras no se copien los valores de la "
-          "Tabla 5 del artículo en `configs/generator.yaml` (`stages.fixed`).\n",
-          "- Longitud máxima de cadena = 5 (supuesto medido: cadenas más largas impiden alcanzar OS 0,6).\n",
-          "- Desviaciones de PB (0,15c) y PM (0,05c): supuestos pendientes de contrastar con el conjunto público.\n",
+          "- Número de etapas: Tabla 5 del artículo (6, 11 y 17 para n = 20, 50 y 100) en grafos MIXED sin "
+          "cadenas sembradas y con OS no extremo para ese K; en el resto, modo `auto` (S = 1 + f·OS·(n − 1)). "
+          "Con la Tabla 5 en CH y BN el rechazo de la capa ampliada llegaba al 60-97 %.\n",
+          "- Longitud máxima de cadena = 5. La Tabla 4 del artículo da longitudes medias de 2,2 a 3,5 en grafos "
+          "reales; cadenas más largas impiden alcanzar OS 0,6.\n",
+          "- Desviaciones de PB (0,15c) y PM (0,05c): el artículo solo da la forma (§8). Siguen como supuesto "
+          "hasta contrastarlas con el conjunto público.\n",
           "- Núcleo BN: el número de cuellos de botella se sortea entre el 1 % y el 6 % de las tareas y el grado "
           "en [8, 14] ([4, 8] para n = 20), igual que en la capa ampliada.\n",
           "- No se implementan módulos ni tareas aisladas (no los necesita el conjunto de referencia).\n"]
