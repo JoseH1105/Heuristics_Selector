@@ -1,0 +1,52 @@
+# Configuración del generador de instancias (F2B).
+# Base: A. Otto, C. Otto y A. Scholl (2013), SALBPGen, EJOR 228(1), 33-45.
+# Cada parámetro indica su fuente: sección del artículo, decisión del contexto maestro
+# o supuesto/medición propia. Cambiar un valor = registrar el cambio (contexto maestro §12).
+
+version: 1                 # versión del generador; entra en el instance_id
+master_seed: 20261116      # semilla maestra por defecto (D10)
+cycle_time: 1000           # P6 y §5.2 del artículo
+sizes: [20, 50, 100]       # D2
+
+# Tolerancia del OS (§5.2, valores por defecto del artículo)
+os_tolerance:
+  - {max_n: 20,   tol: 0.10}    # n <= 20
+  - {max_n: 49,   tol: 0.05}    # 20 < n < 50
+  - {max_n: null, tol: 0.005}   # n >= 50
+
+# Número de etapas del procedimiento por etapas (§5.2, Tabla 5).
+# `fixed`: valor de la Tabla 5 por tamaño (PENDIENTE: copiarlo del artículo; null = usar `auto`).
+# `auto`:  S = 1 + f * OS_objetivo * (n - 1). El anclaje solo deja un OS de (S-1)/(n-1), es decir,
+#          una fracción f del objetivo, y el paso 4 lo completa. Valores de f elegidos por medición
+#          (barrido de f con 15-30 instancias por celda) para que la tasa de rechazo sea < 50 %
+#          en n = 50 y n = 100 (criterio de aceptación de F2B §5).
+stages:
+  mode: auto
+  anchor_os_fraction: {mixed: 0.9, chain: 0.9, bottleneck: 0.3}
+  min_stages: 3
+  fixed: {20: null, 50: null, 100: null}
+
+max_direct_successors: null   # máximo de sucesoras directas por tarea (null = sin límite)
+max_chain_length: 5           # supuesto: cadenas largas impiden alcanzar OS 0,6 (medido en el barrido)
+max_attempts: 500             # intentos por instancia antes de declarar la celda inviable
+
+structures:
+  chain_min_share_core: 0.40          # CH: al menos 40 % de tareas en cadenas (§8)
+  bottleneck:
+    min_degree: {20: 4, default: 8}   # BN: grado mínimo 8 (4 para n = 20) (§8)
+    degree_range: {20: [4, 8], default: [8, 14]}   # capa ampliada y núcleo; grado medio real 5-14
+    share_range: [0.01, 0.06]         # número de cuellos de botella: 1 %-6 % de las tareas, mínimo 1
+
+# Tiempos de tarea (§5.2 y §8): enteros en [0,02c; c]; fuera del intervalo se vuelve a sortear.
+times:
+  min_fraction: 0.02
+  max_fraction: 1.0
+  bm: {p_low: 0.85, low_mean: 0.10, low_sd: 0.15, high_mean: 0.50, high_sd: 0.05}  # §5.2, explícito
+  pb: {mean: 0.10, sd: 0.15}   # forma de §8; desviación = supuesto (contrastar con el conjunto público)
+  pm: {mean: 0.50, sd: 0.05}   # media de §8; desviación = supuesto (contrastar con el conjunto público)
+
+# Capa ampliada (F2B §4.2)
+extended:
+  structure_weights: {mixed: 0.428571, chain: 0.285714, bottleneck: 0.285714}  # proporción del núcleo (3/7, 2/7, 2/7)
+  os_range: {mixed: [0.20, 0.90], chain: [0.20, 0.60], bottleneck: [0.20, 0.60]}
+  chain_share_range: {chain: [0.40, 0.60], mixed: [0.0, 0.45]}

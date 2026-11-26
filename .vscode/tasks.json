@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Crear/actualizar entorno (.venv)",
+      "type": "shell",
+      "command": "powershell -ExecutionPolicy Bypass -File setup_env.ps1",
+      "problemMatcher": []
+    },
+    {
+      "label": "Pruebas (pytest)",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe -m pytest",
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Pruebas lentas (pytest -m slow)",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe -m pytest -m slow",
+      "problemMatcher": []
+    },
+    {
+      "label": "Abrir app del generador",
+      "type": "shell",
+      "command": "${workspaceFolder}\\.venv\\Scripts\\python.exe -m streamlit run apps/generator_app.py",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

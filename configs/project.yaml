@@ -1,0 +1,16 @@
+# Decisiones abiertas P1-P11 (contexto maestro §6). Valores por defecto mientras los tutores
+# no respondan. Al cerrarse en la Fase 0 se actualizan aquí y en el acta (reports/F0_acta_decisiones.md).
+
+P1_tiebreak: lowest_index        # desempate: lowest_index | longest_time | largest_pp
+P2_r11_zero_slack: inf           # R11 con holgura 0 -> prioridad +inf
+P3_n_min_per_rule: 30            # casos mínimos de entrenamiento por regla
+P4_alpha: 0.05                   # nivel de significancia
+P4_bootstrap_replicates: 10000
+P5_vary_graph_structures: true   # tres estructuras y OS de 0,20 a 0,90
+P5_core_share: 0.5               # mitad núcleo, mitad ampliada
+P6_cycle_time: 1000
+P7_dynamic_granularity: per_task_assignment
+P8_topological_numbering: true
+P9_out_of_distribution: [scholl_269, otto_2013]   # análisis secundario, sin indicador
+P10_compute: laptop
+P11_paper: internal_ieee_draft

@@ -1,0 +1,48 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "App del generador (Streamlit)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": ["run", "apps/generator_app.py"],
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    },
+    {
+      "name": "Generador: lote pequeño de prueba",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "salbp_selector.gen",
+      "args": ["--config", "configs/generator.yaml", "--core-per-cell", "2", "--extended", "50",
+               "--out", "data/raw/instances_demo/", "--format", "both"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Generador: base completa (50/celda + 3150 ampliada)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "salbp_selector.gen",
+      "args": ["--config", "configs/generator.yaml", "--core-per-cell", "50", "--extended", "3150",
+               "--out", "data/raw/instances/"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Validación del generador (informe F2B)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "salbp_selector.gen.validate",
+      "args": ["--per-cell", "100", "--extended", "2000"],
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Piloto F2A",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/pilot_f2a.py",
+      "args": ["--per-size", "100"],
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

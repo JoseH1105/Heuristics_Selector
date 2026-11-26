@@ -1,0 +1,25 @@
+# Entorno
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Datos y corridas (contexto maestro §8): no van a git; los manifiestos sí
+data/raw/*
+data/processed/*
+data/external/*
+runs/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+!runs/.gitkeep
+
+# Salidas temporales
+*.log
+reports/*.csv
+
+# Sistema
+.DS_Store
+Thumbs.db

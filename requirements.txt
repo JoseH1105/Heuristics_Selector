@@ -1,0 +1,28 @@
+# Dependencias fijadas del proyecto (Python 3.12). Instalar con:
+#   python -m pip install -r requirements.txt
+#   python -m pip install -e . --no-deps
+#
+# Núcleo: motor (F2A), generador (F2B), base de datos (F3A)
+numpy==2.5.5
+pandas==3.1.1
+pyarrow==26.0.1
+networkx==3.7
+scipy==1.18.1
+PyYAML==6.0.4
+joblib==1.6.0
+matplotlib==3.11.2
+# Aplicación (app del generador y F5A)
+streamlit==1.67.0
+# Aprendizaje automático (F3B, F3C, F3D)
+scikit-learn==1.9.1
+lightgbm==4.7.0
+optuna==5.1.0
+# Consultas opcionales sobre Parquet
+duckdb==2.0.1
+# Pruebas
+pytest==9.2.0
+#
+# PyTorch (MLP de F3C) no se instala aquí porque depende de la GPU. Con CUDA, por ejemplo:
+#   python -m pip install torch --index-url https://download.pytorch.org/whl/cu126
+# Sin GPU:
+#   python -m pip install torch

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "salbp-selector"
+version = "0.1.0"
+description = "Selección automática de heurísticos para SALBP-1 a partir de las características de la instancia (PFG, IOC-UPC)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "José Hernández Barrantes" }]
+# Dependencias del núcleo (F2A, F2B, F3A). Las versiones exactas usadas están en requirements.txt.
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "pyarrow>=14",
+    "networkx>=3.2",
+    "scipy>=1.11",
+    "pyyaml>=6.0",
+    "joblib>=1.3",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.32"]                                   # F5A y app del generador
+ml = ["scikit-learn>=1.4", "lightgbm>=4.3", "optuna>=3.6"]  # F3B, F3C, F3D
+torch = ["torch>=2.2"]                                      # F3C (MLP); instalar con el índice CUDA
+query = ["duckdb>=1.0"]                                     # opcional, consultas sobre Parquet
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+salbp-gen = "salbp_selector.gen.__main__:main"
+salbp-validate-gen = "salbp_selector.gen.validate:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -m 'not slow'"
+markers = ["slow: pruebas largas de rendimiento o de tasa de rechazo (pytest -m slow)"]
